@@ -1,16 +1,26 @@
 # WebLogic Basic Lab
 
-## WebLogic Domain Docker Image
+## Intro to WebLogic Server
 
-A WebLogic domain can be located either in a persistent volume (PV) or in a Docker image. There are advantages to both approaches, and sometimes there are technical limitations of various cloud providers that may make one approach better suited to your needs.
+## Typical topology
+Admin Server + Managed server
 
-This lab uses the Docker image with WebLogic domain inside the image deployment. This means that all the artifacts and domain-related files are stored within the image. This is similar to standard installation topology where you distribute your domain to different hosts to scale out Managed Servers.
+## Connectivity to Database
 
-The main difference is that by using a container-packaged WebLogic Domain, you don’t need to use the pack/unpack mechanism to distribute domain binaries and configuration between multiple hosts.
+DataSources + Connection poooling
+
+## Running and deploying JavaEE applications
+
+Paragraph about this
+
+
+## Running WebLogic Server in Docker
+
+This lab uses the Docker image with WebLogic domain inside the image deployment. We do it as this is the easiest way nowadays to provision lab environments and provision Weblogic in testing and development environments. We avoid process of installing Java, WebLogic Server binaries and configuring the domain. This means that all the artifacts and domain-related files are stored within the image. 
 
 ## WebLogic-Remote-Console
 
-The WebLogic Remote Console is a lightweight, open-source console that you can use to manage your WebLogic Server domain running anywhere, such as on a physical or virtual machine, in a container, Kubernetes, or in the Oracle Cloud. The Remote Console does not need to be co-located with the WebLogic Server domain.
+During these labs we will be using the latest WebLogic Server console that runs outside of the context of the Admin Server. It will run on the desktop of the Administrator. It is called WebLogic Remote Console  and it is a lightweight, open-source console that you can use to manage your WebLogic Server domain running anywhere, such as on a physical or virtual machine, in a container, Kubernetes, or in the Oracle Cloud. The Remote Console does not need to be co-located with the WebLogic Server domain.
 
 You can install and run the Remote Console anywhere, and connect to your domain using WebLogic REST APIs. You simply launch the desktop application and connect to the Administration Server of your domain. Or, you can start the console server, launch the console in a browser and then connect to the Administration Server.
 
