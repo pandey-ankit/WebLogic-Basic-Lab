@@ -49,7 +49,9 @@ If you are already familiar with the WebLogic Server Administration Console depl
 - The Change Center is now expressed as a shopping cart. See [Use the Shopping Cart](https://github.com/oracle/weblogic-remote-console/blob/master/site/console_uidesign.md#cart).
 - Instead of logging directly into the Administration Console deployed in a WebLogic domain, the Remote Console connects to the Administration Server in a WebLogic domain, with the credentials supplied by the user, using WebLogic REST APIs.
 
-##  Steps 1: Login to OCI console and Navigating through Resources
+##  Step 1: Login to OCI console and Navigating through Resources
+
+Due to the limitations of the Luna environment we can't start the docker directly on Luna desktop. So we need to ask you to connect to the "external" compute VM where Docker was already provisioned. This step indicates how to find out the IP of that compute VM where you will be starting WebLogic Server
 
 - On the Desktop, Click on **Luna-Lab.html** file.
 
@@ -81,27 +83,35 @@ If you are already familiar with the WebLogic Server Administration Console depl
 
 ![](images/7.png)
 
-- This page contains the details about this Instance, just note down the **Public IP Address**, which we will use later stage.
+- This page contains the details about this Instance, just note down the **Public IP Address**, which we will use later stage. <ANKIT TO DO hide the IP on 7 and 8 images)
 
 ![](images/8.png)
 
-> Note: In Furthers steps, we will mention this Public IP Address as **<Public_Ip_Of_Instance>**. So, you just need to replace <Public_Ip_Of_Instance> with this Public IP Address.
+> Note: In Furthers steps, we will mention this Public IP Address as **<Public_Ip_Of_Instance>**. So, you just need to replace <Public_Ip_Of_Instance> with this Public IP Address of the VM where will be starting WebLogic domains.
 
 > Leave this tab open in browser. We can use this to copy Public IP of Instance.
 
-## Steps 2: Starting Admin Server in Docker Container
+## Step 2: Starting Admin Server in Docker Container
+
+Once we collected information about the IP of the VM where we will start WebLogic Server in that step you will connect to that VM (through SSH) and download (pull) image that contains the binaries of WebLogic and some sample domain confirguration. After this you will start Admin Server from sample WebLogic domain and you will try to open WebLogic Admin console to verify that the Admin server is up and running.
 
 - Right Click on Luna Desktop and Click on Open Terminal Here.
 
 ![](images/9.png)
 
+- Connect to VM as opc user using SSH
+
 ```bash
-ssh -i ../.ssh/id_rsa opc@<Public_Ip_Of_Instance>
+ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 ```
 
-> Note: Here, **id_rsa** is private key which we need to access to the Instance. **‘<Public_Ip_Of_Instance>’** is Public IP of your instance, which you noted down in earlier steps. Type **yes** when asked as shown below.
+> Note: Here, **id_rsa** is private key which we need to access to the Instance. **[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]** part of the command should be replaced with the Public IP of your VM that you have identified in Step 1. Type **yes** when asked as shown below.
 
 ![](images/10.png)
+
+- Start WebLogic Admin Server inside Docker.
+
+The image with the sample domain is stored in OCIR registry (registry in Oracle Cloud). The server will open inside the container port 7001. And this port will be mapped to port 7001 of the VM. So the admin server will be accessible through port 7001 of our VM.
 
 ```bash
 docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startWebLogic.sh
@@ -113,25 +123,34 @@ docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/we
 
 ![](images/13.png)
 
-> Note: This docker command initially search for this image locally. If not found, it downloads the image from **Oracle Public Repository**. This image has WebLogic Domain embedded in it. Later this command also start the admin server in container on port number 7001 and also map this port to 7001 port in host machine.
+> Note: This docker command initially search for this image locally. If not found, it downloads (pulls) the image from **Oracle Public Repository**. This image has WebLogic Domain embedded in it. Later this command also start the admin server in container on port number 7001 and also map this port to 7001 port in host machine.
 
-- Open a new tab in Chrome Browser and type the **http://<Public_IP_of_Instance>:7001/console**. It will open Admin console. Enter **weblogic/welcome1** as **Username/Password** then click on **Login**.
+- Open a new tab in Chrome Browser and type the **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**. It will open Admin console. Enter **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
 ![](images/14.png)
 
-- Click on **Environment-> Servers** and Observe the Managed servers in cluster and Admin Server.
+- Verify the configuration of the domain and verify that the Admin Server is properly up and running. To do this please click on **Environment-> Servers** and check that all the Managed servers are in **SHUTDOWN** state and Admin Server is in the **RUNNING** state.
 
 ![](images/15.png)
 
-## Steps 3: Starting Managed Server in Docker Container
+## Step 3: Starting Managed Server in Docker Container
+
+In this step you will start another Docker container that will run one of the configured Managed Servers. We will use the same VM. So the Admin Server and the Managed Server will run in the same VM. Admin Server had openned the port 7001. While the managed server will listen on the port 8001.
 
 - Open a new Terminal.
+<ANKIT TO DO - again screenshot how to open>
 
+- Connect through SSH to the VM where we are planning to run WebLogic
+	
 ```bash
-ssh -i ../.ssh/id_rsa opc@<Public_Ip_Of_Instance>
+ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 ```
 
 ![](images/16.png)
+	
+- Start Managed Server as Docker container
+
+We will use the same image as we were using in Step 2. This time we will start another process within the context of that Docker container (Managed Server instead of Admin Server). The Managed Server intends to open and bind to port 8001 of our VM	
 
 ```bash
 docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startManagedWebLogic.sh managed-server1 t3://<Public_Ip_Of_Instance>:7001 -Dweblogic.management.username=weblogic -Dweblogic.management.password=welcome1
@@ -143,11 +162,15 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 > Note: As image is already downloaded in local repositories. Thus, it starts the **managed-server1** at port number 8001 in container (map to port 8001 in host machine). Here we need to authenticate while connecting to admin server.
 
-- Go to the WebLogic Admin Console. And Click on **Refresh icon** to verify Managed Server is in **RUNNING** State.
+- Go to the WebLogic Admin Console (that you have oopened in Chrome browser in step 2). You have left console on the Servers page in Step 2. So if you haven't navigate away from that page then it is enough just to click on **Refresh icon** to verify Managed Server named "manged-server1" is in **RUNNING** State. If you navigated away on the console from the Servers page you need navigate back to that page (as described in the Step 2)
 
 ![](images/19.png)
 
-## Steps 4: Creating JDBC Data-Source through Admin Console
+## Step 4: Creating JDBC Data-Source through Admin Console
+
+WebLogic Server connects to Datbase(s) through mechanism called connection pooling. So the application server opens set of precreated connections that are reused by the applications. So once the application needs to utilize the precrated connection then it uses the API to find proper Connection Pool (the API is called DataSource API) and asks Connection Pool to "borrow" a connection for a moment. It is the Application developer responsibility to "return" the connection to the pool once the connection is not needed anymore. In this step we will explain how to configure DataSource object in WebLogic Server so the applications my interact with the Connection Pool mechanism and find proper DataSource.
+	
+In the Luna environment we created for you simple running Oracle DB. And in this lab we will demonstrate how to connect to that DB.
 
 - On the Desktop, Click on **Luna-Lab.html** file.
 
@@ -176,10 +199,11 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 ![](images/24.png)
 
 > Note: You need to note some information like **Hostname**, **DB name** and **User name**. This information will be required, when we will create JDBC data source in next steps.
+	[ANKIT TO DO - THIS DOESN'T EXPLAIN WHERE I SHOULD READ IT FROM I MEAN HOSTNAM DBNAME and USERNAME???? ]
 
-- Go back to browser and open a WebLogic Admin Console at **http://<Public_Ip_Of_Instance>:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
+- Go back to browser and open a WebLogic Admin Console at **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
-- Click on **Lock & Edit**.
+- The configuration changes require to open the "Edit" session. So you need to click on **Lock & Edit**.
 
 ![](images/25.png)
 
@@ -193,7 +217,7 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 > 	Scope:		      		  Global
 
-> 	JNDI Name:		      	  jdbc/testDS
+> 	JNDI Name:		      	  jdbc/testDS (this is the name that Application will use to find Connection Pool)
 
 > 	Database Type:			  Oracle
 
@@ -210,7 +234,7 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 - Enter the following information for Database connection and click on **Next**.
 
->  Database Name, Host Name details can be found in DB Connection String.
+>  Database Name, Host Name details can be found in DB Connection String. [ANKIT TODO- YOU NEED TO EXPLAIN HOW TO READ THIS FROM THE CONNECTION STRING]
 
 >   	Port:	 			1521
 
@@ -220,6 +244,9 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 ![](images/30.png)
 
+
+	[ANKIT TO DO THESE CREDENTIALS SHOULD BE PLACED IN ANOTHER MD file]
+	
 > Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the below credentials.
 
 
@@ -241,19 +268,19 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 ![](images/33.png)
 
-- Click on **“Activate Changes”**. 
+- Click on **“Activate Changes”**. This will end "Edit" session and apply changes
 
 ![](images/34.png)
 
 ![](images/35.png)
 
-- As part of this lab, we have deployed one web application in domain. Click on **Deployments**.
+- The demo image that we are using is having one preconfigured web application that is runnin on Managed Server. This preconfigured web app allows you test and verify all JDBC Connection parameters from DataSource. Click on **Deployments**.
 
 ![](images/36.png)
 
 > Note: We have **testwebapp** deployed in **cluster**
 
-- Go to Browser and type the following URL **http://<Public_Ip_Of_Instance>:8001/opdemo/?dsname=testDS**.
+- Go to Browser and type the following URL **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:8001/opdemo/?dsname=testDS**.
 
 ![](images/37.png)
 
@@ -262,10 +289,15 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 > Note: Here **managed-server1** is running at port number **8001** and context for application is **‘/opdemo’**. So, once you provide the **Datasource name** in URL, it will provide you the Database URL for this Datasource.
 
   
-## Steps 5: Deployment of Application on Managed Server
+## Step 5: Deployment of Application on Managed Server
 
+[ANKIT TO DO - 4-5 sentences what we do in this lab	
+	
 - Open a new terminal.
-
+[ANKIT TO DO screenshot for openning termina]
+	
+- Download demo application archive
+	
 ```bash
 curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tripper-v1.ear?raw=true > aussie-tripper-v1.ear
 ```
@@ -275,11 +307,11 @@ curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tr
 > Note: This command downloads the application **aussie-tripper-v1.ear** from git repository and put it in Desktop. 
 
   
-- Go to Admin Console **http://<Public_Ip_of_Instance>:7001/console**  and Click on **Deployments**.
+- Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**  and Click on **Deployments**.
 
 ![](images/39.png)
 
-- Click on **Lock & Edit**.
+- Making application deployment requires making changes in the Weblogic configuration so you need to click on **Lock & Edit** first to start "Edit" session.
 
 ![](images/40.png)
 
@@ -331,50 +363,58 @@ curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tr
 
 ![](images/52.png)
   
-- Open a new tab in Chrome Browser and open **http://<Public_IP_Of_Instance>:8001/aussie-tripper/**
+- Open a new tab in Chrome Browser and open **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:8001/aussie-tripper/**
 
 ![](images/53.png)
 
-- You can add Trips by Click on Different Destination and you can also Clear Trips as well.
+- You can add Trips by Click on Different Destination and you can also Clear Trips as well. Or you can play in another way wth that demo app
 
-## Steps 6: Accessing Admin Server using WebLogic-Remote-Console
+## Step 6: Accessing Admin Server using WebLogic-Remote-Console
 
-- Copy the following URL[WebLogic-Remote-Console](https://github.com/oracle/weblogic-remote-console/releases)  and paste it on new tab in browser. Download the file **console.zip**.
+[ANKIT TO DO - 5-6 sentence what we do in that step]	
+	
+- We need to install new lightway console to WebLogic. To do that first Copy the following URL[WebLogic-Remote-Console](https://github.com/oracle/weblogic-remote-console/releases)  and paste it on new tab in browser. Download the file **console.zip**.
 
 ![](images/54.png)
 
-- Open a new terminal.
+- Open a new terminal and navigate to the folder where you have downloaded binaries of the console.
 
 ```bash
 cd /home/luna.user/Downloads/
 ```
 
+- Extract the archive with the binaries	
+	
 ```bash
 unzip console.zip
 ```
 ![](images/55.png)
 
+- Start console as below	
+	
 ```bash
 java -jar console/console.jar
 ```
 ![](images/56.png)
 
-- It starts the WebLogic Remote Console. Go to Browser and paste the URL **http://localhost:8012/**
+- It starts the WebLogic Remote Console. Go to Browser and paste the URL **http://localhost:8012/** This time console works directly on the desktop of luna (not inside VM) so you are using localhost as Hostname for the application. The port 8012 is default port of WebLogic Remote Console
 
 ![](images/57.png)
 
-- Enter the Following details and click on **Connect**.
+- You need to connect WebLogic Remote Console with WebLogic Admin Server. The Remote Console relies on REST API. So please enter the Following details and click on **Connect**.
 
 > 	Username:		weblogic
 
 > 	Password:		welcome1
 
-> 	URL:			http://<Public_IP_Of_Instance>:7001
+> 	URL:			http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001
 
 ![](images/58.png)
 
 ## Re-Configuration of JDBC Datasource through WebLogic-Remote-Console
 
+[ANKIT TO DO 3-4 sentences What we are planning to do here] 
+	
 - As we connect to Admin Server, we observe two options: **Configuration** and **Monitoring**.
 
 ![](images/59.png)
@@ -415,6 +455,8 @@ java -jar console/console.jar
 
 ## Monitoring through WebLogic-Remote-Console
 
+	[ANKIT TO DO again 3-4 sentences what we are planning to do here]
+	
 - Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
 
 ![](images/69.png)
