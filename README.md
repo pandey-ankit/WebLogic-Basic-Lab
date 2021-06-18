@@ -128,7 +128,7 @@ docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/we
 - Open a new Terminal.
 
 ```bash
-ssh -i .ssh/id_rsa opc@<Public_Ip_Of_Instance>
+ssh -i ../.ssh/id_rsa opc@<Public_Ip_Of_Instance>
 ```
 
 ![](images/16.png)
@@ -346,7 +346,7 @@ curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tr
 - Open a new terminal.
 
 ```bash
-cd /home/luna.users/Downloads/
+cd /home/luna.user/Downloads/
 ```
 
 ```bash
