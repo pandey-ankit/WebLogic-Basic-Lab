@@ -53,37 +53,37 @@ If you are already familiar with the WebLogic Server Administration Console depl
 
 Due to the limitations of the Luna environment we can't start the docker directly on Luna desktop. So we need to ask you to connect to the "external" compute VM where Docker was already provisioned. This step indicates how to find out the IP of that compute VM where you will be starting WebLogic Server
 
-- On the Desktop, Click on **Luna-Lab.html** file.
+a. On the Desktop, Click on **Luna-Lab.html** file.
 
 ![](images/1.png)
 
-- This Luna-Lab.html file contains the Credentials for your oracle cloud account which you will use for this lab.
+b. This Luna-Lab.html file contains the Credentials for your oracle cloud account which you will use for this lab.
 
 ![](images/2.png)
 
-- Click on **OCI CONSOLE**. It opens a new tab. Click on **Copy** for copying **Username** and **Password** and paste it on new tab as shown below. Click on **Sign In**.
+c. Click on **OCI CONSOLE**. It opens a new tab. Click on **Copy** for copying **Username** and **Password** and paste it on new tab as shown below. Click on **Sign In**.
 
 ![](images/2.png)
 
 ![](images/3.png)
-- Get Started page open up, where you have Quick Actions links for creating various resources.
+d. Get Started page open up, where you have Quick Actions links for creating various resources.
 
 ![](images/4.png)
 
-- Let’s navigate through the resources, which we provisioned for you as part of this Lab. 
-- Click on **Hamburger menu** on the left upper corner, then click on **Compute -> Instances**.
+e. Let’s navigate through the resources, which we provisioned for you as part of this Lab. 
+f. Click on **Hamburger menu** on the left upper corner, then click on **Compute -> Instances**.
 
 ![](images/5.png)
 
-- In the **Compartment**, Select the compartment which is under the **Luna-Labs** as shown below.
+g. In the **Compartment**, Select the compartment which is under the **Luna-Labs** as shown below.
 
 ![](images/6.png)
 
-- You can see the Instance in this section, which we will use in this lab. Click on the **Instance**.
+h. You can see the Instance in this section, which we will use in this lab. Click on the **Instance**.
 
 ![](images/7.png)
 
-- This page contains the details about this Instance, just note down the **Public IP Address**, which we will use later stage. <ANKIT TO DO hide the IP on 7 and 8 images)
+i. This page contains the details about this Instance, just note down the **Public IP Address**, which we will use later stage. 
 
 ![](images/8.png)
 
@@ -95,11 +95,11 @@ Due to the limitations of the Luna environment we can't start the docker directl
 
 Once we collected information about the IP of the VM where we will start WebLogic Server in that step you will connect to that VM (through SSH) and download (pull) image that contains the binaries of WebLogic and some sample domain confirguration. After this you will start Admin Server from sample WebLogic domain and you will try to open WebLogic Admin console to verify that the Admin server is up and running.
 
-- Right Click on Luna Desktop and Click on Open Terminal Here.
+a. Right Click on Luna Desktop and Click on Open Terminal Here.
 
 ![](images/9.png)
 
-- Connect to VM as opc user using SSH
+b. Connect to VM as opc user using SSH
 
 ```bash
 ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
@@ -109,7 +109,7 @@ ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 
 ![](images/10.png)
 
-- Start WebLogic Admin Server inside Docker.
+c. Start WebLogic Admin Server inside Docker.
 
 The image with the sample domain is stored in OCIR registry (registry in Oracle Cloud). The server will open inside the container port 7001. And this port will be mapped to port 7001 of the VM. So the admin server will be accessible through port 7001 of our VM.
 
@@ -125,11 +125,11 @@ docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/we
 
 > Note: This docker command initially search for this image locally. If not found, it downloads (pulls) the image from **Oracle Public Repository**. This image has WebLogic Domain embedded in it. Later this command also start the admin server in container on port number 7001 and also map this port to 7001 port in host machine.
 
-- Open a new tab in Chrome Browser and type the **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**. It will open Admin console. Enter **weblogic/welcome1** as **Username/Password** then click on **Login**.
+d. Open a new tab in Chrome Browser and type the **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**. It will open Admin console. Enter **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
 ![](images/14.png)
 
-- Verify the configuration of the domain and verify that the Admin Server is properly up and running. To do this please click on **Environment-> Servers** and check that all the Managed servers are in **SHUTDOWN** state and Admin Server is in the **RUNNING** state.
+e. Verify the configuration of the domain and verify that the Admin Server is properly up and running. To do this please click on **Environment-> Servers** and check that all the Managed servers are in **SHUTDOWN** state and Admin Server is in the **RUNNING** state.
 
 ![](images/15.png)
 
@@ -137,11 +137,11 @@ docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/we
 
 In this step you will start another Docker container that will run one of the configured Managed Servers. We will use the same VM. So the Admin Server and the Managed Server will run in the same VM. Admin Server had openned the port 7001. While the managed server will listen on the port 8001.
 
-- Right click on the Desktop and then click on **Open Terminal Here**.
+a. Right click on the Desktop and then click on **Open Terminal Here**.
 
 ![](images/9.png)
 
-- Connect through SSH to the VM where we are planning to run WebLogic
+b. Connect through SSH to the VM where we are planning to run WebLogic
 	
 ```bash
 ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
@@ -149,7 +149,7 @@ ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 
 ![](images/16.png)
 	
-- Start Managed Server as Docker container
+c. Start Managed Server as Docker container
 
 We will use the same image as we were using in Step 2. This time we will start another process within the context of that Docker container (Managed Server instead of Admin Server). The Managed Server intends to open and bind to port 8001 of our VM	
 
@@ -163,7 +163,7 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 > Note: As image is already downloaded in local repositories. Thus, it starts the **managed-server1** at port number 8001 in container (map to port 8001 in host machine). Here we need to authenticate while connecting to admin server.
 
-- Go to the WebLogic Admin Console (that you have oopened in Chrome browser in step 2). You have left console on the Servers page in Step 2. So if you haven't navigate away from that page then it is enough just to click on **Refresh icon** to verify Managed Server named "manged-server1" is in **RUNNING** State. If you navigated away on the console from the Servers page you need navigate back to that page (as described in the Step 2)
+d. Go to the WebLogic Admin Console (that you have oopened in Chrome browser in step 2). You have left console on the Servers page in Step 2. So if you haven't navigate away from that page then it is enough just to click on **Refresh icon** to verify Managed Server named "manged-server1" is in **RUNNING** State. If you navigated away on the console from the Servers page you need navigate back to that page (as described in the Step 2)
 
 ![](images/19.png)
 
@@ -173,27 +173,27 @@ WebLogic Server connects to Datbase(s) through mechanism called connection pooli
 	
 In the Luna environment we created for you simple running Oracle DB. And in this lab we will demonstrate how to connect to that DB.
 
-- On the Desktop, Click on **Luna-Lab.html** file.
+a. On the Desktop, Click on **Luna-Lab.html** file.
 
-- This Luna-Lab.html file contains the Credentials for your oracle cloud account which you will use for this lab.
+b. This Luna-Lab.html file contains the Credentials for your oracle cloud account which you will use for this lab.
 
-- Click on **OCI CONSOLE**. It opens a new tab. Click on Copy for copying Username and Password and paste it on new tab as shown below.
+c. Click on **OCI CONSOLE**. It opens a new tab. Click on Copy for copying Username and Password and paste it on new tab as shown below.
 
-- Click on **Sign In**.
+d. Click on **Sign In**.
 
-- Click on **Hamburger menu** in upper left corner, then click on **Oracle Database -> Bare Metal, VM and Exadata**.
+e. Click on **Hamburger menu** in upper left corner, then click on **Oracle Database -> Bare Metal, VM and Exadata**.
 
 ![](images/20.png)
 
-- Select the Same **Compartment** and Click on DB System **DBWLS** which is created for you.
+f. Select the Same **Compartment** and Click on DB System **DBWLS** which is created for you.
 
 ![](images/21.png)
 
-- Click on the Databases **DBWLS** as shown below.
+g. Click on the Databases **DBWLS** as shown below.
 
 ![](images/22.png)
 
-- Click on **DB Connection** tab, Then Click on **Show** in **Easy Connect**. It will provide the **Connection String** Which we will use for using this database.
+h. Click on **DB Connection** tab, Then Click on **Show** in **Easy Connect**. It will provide the **Connection String** Which we will use for using this database.
 
 ![](images/23.png)
 
@@ -210,17 +210,17 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 	
 > This information will be required, when we will create JDBC data source in next steps.
 
-- Go back to browser and open a WebLogic Admin Console at **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
+i. Go back to browser and open a WebLogic Admin Console at **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
-- The configuration changes require to open the "Edit" session. So you need to click on **Lock & Edit**.
+j. The configuration changes require to open the "Edit" session. So you need to click on **Lock & Edit**.
 
 ![](images/25.png)
 
-- Click on **Services-> Data Sources-> New-> Generic Data Source**.
+k. Click on **Services-> Data Sources-> New-> Generic Data Source**.
 
 ![](images/26.png)
 
-- Enter the Following Details and click on **Next**.
+l. Enter the Following Details and click on **Next**.
 
 > 	Name:     			  testDS
 
@@ -233,15 +233,15 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 ![](images/27.png)
 
 
-- Select the Database Driver as **“Oracle Driver (Thin) for Service Connection; Version: Any”** and click on **Next**.
+m. Select the Database Driver as **“Oracle Driver (Thin) for Service Connection; Version: Any”** and click on **Next**.
 
 ![](images/28.png)
 
-- Leave Default on Next Screen and click on **Next**.
+n. Leave Default on Next Screen and click on **Next**.
 
 ![](images/29.png)
 
-- Collect the following information from Connection String in the Oracle Database Page.
+o. Collect the following information from Connection String in the Oracle Database Page.
 
 > If **mydb.sub06110437450.ankitvcn.oraclevcn.com:1521/DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com** is your connection string, then it is in  <**HostName**>:1521/<**DBName**> format.So in this case **Hostname** is *mydb.sub06110437450.ankitvcn.oraclevcn.com* and **DBName** is *DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com*. So please find out your own **HostName** and **DBName** from your connection string. Please look out your own Database Connection tab, below image is just for showing you what is your **HostName** and **DBName**.
 
@@ -252,30 +252,30 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 >		Username:		system
 >		Password:		AAaa11##1
 
-- So you need to Enter your values  for **Hostname** and **DBName** from connection string similar to below one and click on **Next**.
+p. So you need to Enter your values  for **Hostname** and **DBName** from connection string similar to below one and click on **Next**.
 
->	Database Name:			*DBName*
+>		 		Database Name:			DBName
 	
->	Host Name:			*HostName*
+>				Host Name:			HostName
 
->   	Port:	 			1521
+>   			Port:	 			1521
 
->   	Database User Name:		system
+>   			Database User Name:		system
 
->   	Password:			AAaa11##1
+>   			Password:			AAaa11##1
 
 ![](images/30.png)
 	
 > Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the DB credentials in https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/DBREADME.md.
 
 
-- Click on **Test Configuration**.  You will see message **“Connection test succeeded”**. Click on **Next**.
+q. Click on **Test Configuration**.  You will see message **“Connection test succeeded”**. Click on **Next**.
 
 ![](images/31.png)
 
 ![](images/32.png)
 
-- Select **‘admin-server’** as **Select Targets** and click on **Finish**.
+r. Select **‘admin-server’** as **Select Targets** and click on **Finish**.
 
 ![](images/33.png)
 
@@ -285,7 +285,7 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 ![](images/35.png)
 
-- The demo image that we are using is having one preconfigured web application that is running on Managed Server. This preconfigured web app allows you to test and verify all JDBC Connection parameters from DataSource. Click on **Deployments**.
+s. The demo image that we are using is having one preconfigured web application that is running on Managed Server. This preconfigured web app allows you to test and verify all JDBC Connection parameters from DataSource. Click on **Deployments**.
 
 ![](images/36.png)
 
@@ -304,10 +304,10 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 [ANKIT TO DO - 4-5 sentences what we do in this lab	
 	
-- Right Click on the Desktop, and then click on **Open Terminal Here**.
+a. Right Click on the Desktop, and then click on **Open Terminal Here**.
 
 	
-- Download demo application archive
+b. Download demo application archive
 	
 ```bash
 curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tripper-v1.ear?raw=true > aussie-tripper-v1.ear
@@ -318,101 +318,101 @@ curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tr
 > Note: This command downloads the application **aussie-tripper-v1.ear** from git repository and put it in Desktop. 
 
   
-- Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**  and Click on **Deployments**.
+c. Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**  and Click on **Deployments**.
 
 ![](images/39.png)
 
-- Making application deployment requires making changes in the Weblogic configuration so you need to click on **Lock & Edit** first to start "Edit" session.
+d. Making application deployment requires making changes in the Weblogic configuration so you need to click on **Lock & Edit** first to start "Edit" session.
 
 ![](images/40.png)
 
-- Click on **Install**.
+e. Click on **Install**.
 
 ![](images/41.png)
 
-- Click on **“Upload your file(s)”**.
+f. Click on **“Upload your file(s)”**.
 
 ![](images/42.png)
 
-- Click on **“Choose File”** in **Deployment Archive**.
+g. Click on **“Choose File”** in **Deployment Archive**.
 
 ![](images/43.png)
 
-- Select the **aussie-tripper-v1.ear** file in **/home/luna.user/Desktop/** folder and click on **Open**.
+h. Select the **aussie-tripper-v1.ear** file in **/home/luna.user/Desktop/** folder and click on **Open**.
 
 ![](images/44.png)
 
-- Click on **Next**.
+i. Click on **Next**.
 
 ![](images/45.png)
 
-- On Next Page, Select the **aussie-tripper-v1.ear** file and then click on **Next**.
+j. On Next Page, Select the **aussie-tripper-v1.ear** file and then click on **Next**.
 
 ![](images/46.png)
 
-- Select **“Install this deployment as an application”** and then click on **Next**.
+k. Select **“Install this deployment as an application”** and then click on **Next**.
 
 ![](images/47.png)
 
-- Select **“cluster-1”** as Available targets for aussie-tripper-v1 and then click on **Next**.
+l. Select **“cluster-1”** as Available targets for aussie-tripper-v1 and then click on **Next**.
 
 ![](images/48.png)
 
-- On Next page, Click on **Finish**.
+m. On Next page, Click on **Finish**.
 
 ![](images/49.png)
 
-- Click on **“Activate Changes”**.
+n. Click on **“Activate Changes”**.
 
 ![](images/50.png)
 
-- Select the **Control tab** and then check the box for **“aussie-tripper-v1”** app and click on **Start->Servicing all request**.
+o. Select the **Control tab** and then check the box for **“aussie-tripper-v1”** app and click on **Start->Servicing all request**.
 
 ![](images/51.png)
 
-- Click on **“Yes”**.
+p. Click on **“Yes”**.
 
 ![](images/52.png)
   
-- Open a new tab in Chrome Browser and open **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:8001/aussie-tripper/**
+q. Open a new tab in Chrome Browser and open **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:8001/aussie-tripper/**
 
 ![](images/53.png)
 
-- You can add Trips by Click on Different Destination and you can also Clear Trips as well. Or you can play in another way wth that demo app
+r. You can add Trips by Click on Different Destination and you can also Clear Trips as well. Or you can play in another way wth that demo app
 
 ## Step 6: Accessing Admin Server using WebLogic-Remote-Console
 
 [ANKIT TO DO - 5-6 sentence what we do in that step]	
 	
-- We need to install new lightway console to WebLogic. To do that first Copy the following URL[WebLogic-Remote-Console](https://github.com/oracle/weblogic-remote-console/releases)  and paste it on new tab in browser. Download the file **console.zip**.
+a. We need to install new lightway console to WebLogic. To do that first Copy the following URL[WebLogic-Remote-Console](https://github.com/oracle/weblogic-remote-console/releases)  and paste it on new tab in browser. Download the file **console.zip**.
 
 ![](images/54.png)
 
-- Open a new terminal and navigate to the folder where you have downloaded binaries of the console.
+b. Open a new terminal and navigate to the folder where you have downloaded binaries of the console.
 
 ```bash
 cd /home/luna.user/Downloads/
 ```
 
-- Extract the archive with the binaries	
+c. Extract the archive with the binaries	
 	
 ```bash
 unzip console.zip
 ```
 ![](images/55.png)
 
-- Start console as below	
+d. Start console as below	
 	
 ```bash
 java -jar console/console.jar
 ```
 ![](images/56.png)
 
-- It starts the WebLogic Remote Console. Go to Browser and paste the URL **http://localhost:8012/** This time console works directly on the desktop of luna (not inside VM) so you are using localhost as Hostname for the application. The port 8012 is default port of WebLogic Remote Console
+e. It starts the WebLogic Remote Console. Go to Browser and paste the URL **http://localhost:8012/** This time console works directly on the desktop of luna (not inside VM) so you are using localhost as Hostname for the application. The port 8012 is default port of WebLogic Remote Console
 
 ![](images/57.png)
 
-- You need to connect WebLogic Remote Console with WebLogic Admin Server. The Remote Console relies on REST API. So please enter the Following details and click on **Connect**.
+f. You need to connect WebLogic Remote Console with WebLogic Admin Server. The Remote Console relies on REST API. So please enter the Following details and click on **Connect**.
 
 > 	Username:		weblogic
 
@@ -426,41 +426,41 @@ java -jar console/console.jar
 
 [ANKIT TO DO 3-4 sentences What we are planning to do here] 
 	
-- As we connect to Admin Server, we observe two options: **Configuration** and **Monitoring**.
+a. As we connect to Admin Server, we observe two options: **Configuration** and **Monitoring**.
 
 ![](images/59.png)
 
-- Click on the **Configuration Icon -> Services-> JDBC System Resources-> testDS-> Connection Pool** as shown in below image.
+b. Click on the **Configuration Icon -> Services-> JDBC System Resources-> testDS-> Connection Pool** as shown in below image.
 
 ![](images/60.png)
 
-- Click on **Hamburger menu** in the upper left corner and then press **F11** to enter full screen.
+c. Click on **Hamburger menu** in the upper left corner and then press **F11** to enter full screen.
 
 ![](images/61.png)
 
-- Change the **Initial Capacity** and **Minimum Capacity** from **1** to **2** in **Connection Pool** tab and then click on **Save**.
+d. Change the **Initial Capacity** and **Minimum Capacity** from **1** to **2** in **Connection Pool** tab and then click on **Save**.
 
 ![](images/62.png)
  
-- It shows **“Changes added to the cart”**.
+e. It shows **“Changes added to the cart”**.
 
 ![](images/63.png)
 
-- Click on the **Shopping Cart Icon** and then click on **Commit Changes**.
+f. Click on the **Shopping Cart Icon** and then click on **Commit Changes**.
 
 ![](images/64.png)
 
 ![](images/65.png)
 
-- Go to Admin Console **http://<Public_IP_Of_Instance>:7001/console** and verify the changes we made through **WebLogic-Remote-Console**.
+g. Go to Admin Console **http://<Public_IP_Of_Instance>:7001/console** and verify the changes we made through **WebLogic-Remote-Console**.
 
 ![](images/66.png)
 
-- Click on **Services-> Data Sources-> testDS-> Connection Pool**.
+h. Click on **Services-> Data Sources-> testDS-> Connection Pool**.
 
 ![](images/67.png)
  
-- Verify the **Initial Capacity** and **Minimum Capacity**.
+i. Verify the **Initial Capacity** and **Minimum Capacity**.
 
 ![](images/68.png)
 
@@ -468,27 +468,27 @@ java -jar console/console.jar
 
 	[ANKIT TO DO again 3-4 sentences what we are planning to do here]
 	
-- Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
+a. Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
 
 ![](images/69.png)
 
-- Click on **Hamburger menu** of upper left corner and you may observe the **Session Opened Total Count** is equal to **1**.
+b. Click on **Hamburger menu** of upper left corner and you may observe the **Session Opened Total Count** is equal to **1**.
 
 ![](images/70.png)
 	
-- Go to browser and open a **New Incognito window**.
+c. Go to browser and open a **New Incognito window**.
 
 ![](images/71.png)
 
-- Open aussie-tripper home page: **http://<Public_IP_of_Instance>:8001/aussie-tripper/**.
+d. Open aussie-tripper home page: **http://<Public_IP_of_Instance>:8001/aussie-tripper/**.
 
 ![](images/72.png)
 
   
-- Go back to **WebLogic-Remote-Console** and click on **Refresh Icon**.
+e. Go back to **WebLogic-Remote-Console** and click on **Refresh Icon**.
 
 ![](images/73.png)
 
-- Verify the **open session count** as **2**.
+f. Verify the **open session count** as **2**.
 
 ![](images/74.png)
