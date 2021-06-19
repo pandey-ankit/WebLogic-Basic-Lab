@@ -137,8 +137,9 @@ docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/we
 
 In this step you will start another Docker container that will run one of the configured Managed Servers. We will use the same VM. So the Admin Server and the Managed Server will run in the same VM. Admin Server had openned the port 7001. While the managed server will listen on the port 8001.
 
-- Open a new Terminal.
-<ANKIT TO DO - again screenshot how to open>
+- Right click on the Desktop and then click on **Open Terminal Here**.
+
+![](images/9.png)
 
 - Connect through SSH to the VM where we are planning to run WebLogic
 	
@@ -168,7 +169,7 @@ docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/webl
 
 ## Step 4: Creating JDBC Data-Source through Admin Console
 
-WebLogic Server connects to Datbase(s) through mechanism called connection pooling. So the application server opens set of precreated connections that are reused by the applications. So once the application needs to utilize the precrated connection then it uses the API to find proper Connection Pool (the API is called DataSource API) and asks Connection Pool to "borrow" a connection for a moment. It is the Application developer responsibility to "return" the connection to the pool once the connection is not needed anymore. In this step we will explain how to configure DataSource object in WebLogic Server so the applications my interact with the Connection Pool mechanism and find proper DataSource.
+WebLogic Server connects to Datbase(s) through mechanism called connection pooling. So the application server opens set of precreated connections that are reused by the applications. So once the application needs to utilize the precreated connection then it uses the API to find proper Connection Pool (the API is called DataSource API) and asks Connection Pool to "borrow" a connection for a moment. It is the Application developer responsibility to "return" the connection to the pool once the connection is not needed anymore. In this step we will explain how to configure DataSource object in WebLogic Server so the applications my interact with the Connection Pool mechanism and find proper DataSource.
 	
 In the Luna environment we created for you simple running Oracle DB. And in this lab we will demonstrate how to connect to that DB.
 
@@ -198,8 +199,16 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 ![](images/24.png)
 
-> Note: You need to note some information like **Hostname**, **DB name** and **User name**. This information will be required, when we will create JDBC data source in next steps.
-	[ANKIT TO DO - THIS DOESN'T EXPLAIN WHERE I SHOULD READ IT FROM I MEAN HOSTNAM DBNAME and USERNAME???? ]
+> Note: You need to note some information like **Hostname**, **DB name** from **Connection String**.
+
+> If **mydb.sub06110437450.ankitvcn.oraclevcn.com:1521/DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com** is your connection string, then it is <**HostName**>:1521/<**DBName**> format.So in this case **Hostname** is *mydb.sub06110437450.ankitvcn.oraclevcn.com* and **DBName** is *DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com*. 
+	
+> Below are the Value of **Username** and **Password** for the above Database.
+	
+>		Username:		system
+>		Password:		AAaa11##1
+	
+> This information will be required, when we will create JDBC data source in next steps.
 
 - Go back to browser and open a WebLogic Admin Console at **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
@@ -232,9 +241,22 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 ![](images/29.png)
 
-- Enter the following information for Database connection and click on **Next**.
+- Collect the following information from Connection String in the Oracle Database Page.
 
->  Database Name, Host Name details can be found in DB Connection String. [ANKIT TODO- YOU NEED TO EXPLAIN HOW TO READ THIS FROM THE CONNECTION STRING]
+> If **mydb.sub06110437450.ankitvcn.oraclevcn.com:1521/DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com** is your connection string, then it is in  <**HostName**>:1521/<**DBName**> format.So in this case **Hostname** is *mydb.sub06110437450.ankitvcn.oraclevcn.com* and **DBName** is *DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com*. So please find out your own **HostName** and **DBName** from your connection string. Please look out your own Database Connection tab, below image is just for showing you what is your **HostName** and **DBName**.
+
+![](images/75.png)
+	
+> Below are the Value of **Username** and **Password** for the above Database.
+	
+>		Username:		system
+>		Password:		AAaa11##1
+
+- So you need to Enter your values  for **Hostname** and **DBName** from connection string similar to below one and click on **Next**.
+
+>	Database Name:			*DBName*
+	
+>	Host Name:			*HostName*
 
 >   	Port:	 			1521
 
@@ -243,20 +265,9 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 >   	Password:			AAaa11##1
 
 ![](images/30.png)
-
-
-	[ANKIT TO DO THESE CREDENTIALS SHOULD BE PLACED IN ANOTHER MD file]
 	
-> Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the below credentials.
+> Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the DB credentials in https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/DBREADME.md.
 
-
->           Hostname:		129.146.60.235 <Public_Ip_of_Instance_Containing_DB>
-
->           DB Name:		DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com
-
->           Username:		system
-
->	    Password:		AAaa11##1
 
 - Click on **Test Configuration**.  You will see message **“Connection test succeeded”**. Click on **Next**.
 
@@ -274,7 +285,7 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 ![](images/35.png)
 
-- The demo image that we are using is having one preconfigured web application that is runnin on Managed Server. This preconfigured web app allows you test and verify all JDBC Connection parameters from DataSource. Click on **Deployments**.
+- The demo image that we are using is having one preconfigured web application that is running on Managed Server. This preconfigured web app allows you to test and verify all JDBC Connection parameters from DataSource. Click on **Deployments**.
 
 ![](images/36.png)
 
@@ -293,8 +304,8 @@ In the Luna environment we created for you simple running Oracle DB. And in this
 
 [ANKIT TO DO - 4-5 sentences what we do in this lab	
 	
-- Open a new terminal.
-[ANKIT TO DO screenshot for openning termina]
+- Right Click on the Desktop, and then click on **Open Terminal Here**.
+
 	
 - Download demo application archive
 	
