@@ -302,7 +302,7 @@ s. The demo image that we are using is having one preconfigured web application 
   
 ## Step 5: Deployment of Application on Managed Server
 
-[ANKIT TO DO - 4-5 sentences what we do in this lab	
+In this embedded domain **sample-domain1**, we have dynamic cluster **cluster-1**. In this step we will deploy **aussie-tripper-v1.ear** application to dynamic cluster **cluster-1**.  We already started managed-server1 in step 3. Se here we show, How you deploy an application archive file as an application to the cluster and How you make an application, to start servicing all request. Later, as have only one managed server running  inside the cluster, so we will access the **aussie-tripper** application on managed-server1 port 8001.
 	
 a. Right Click on the Desktop, and then click on **Open Terminal Here**.
 
@@ -382,8 +382,8 @@ r. You can add Trips by Click on Different Destination and you can also Clear Tr
 
 ## Step 6: Accessing Admin Server using WebLogic-Remote-Console
 
-[ANKIT TO DO - 5-6 sentence what we do in that step]	
-	
+In this step, first we download the zip file for WebLogic-Remote-Console. As it is required to run the Remote-Console in the browser. Then we unzip the zip file. Later, we start the remote console on Luna environment using the default settings- localhost(127.0.0.1) and port 8012. Then we access the WebLogic-Remote-Console through browser on url **http://localhost:8012**. After that, we will connect to the admin server running in **sample-domain1** by provideing username, password and url.
+
 a. We need to install new lightway console to WebLogic. To do that first Copy the following URL[WebLogic-Remote-Console](https://github.com/oracle/weblogic-remote-console/releases)  and paste it on new tab in browser. Download the file **console.zip**.
 
 ![](images/54.png)
@@ -424,7 +424,7 @@ f. You need to connect WebLogic Remote Console with WebLogic Admin Server. The R
 
 ## Re-Configuration of JDBC Datasource through WebLogic-Remote-Console
 
-[ANKIT TO DO 3-4 sentences What we are planning to do here] 
+We can make configuration changes through WebLogic-Remote-Console. So in this step, we make some changes in the JDBC datasource **testDS**, which we created as part of step 4. Initially, in connection pool of **testDS**, we have initial capacity and minimum capacity to 1.  So in this step, using WebLogic-Remote-Console we change the initial capacity and minimum capacity to 2. In WebLogic Admin console, when you make changes, you need to activate changes. Like in step 5, when we deploy an application through admin console, we click on **Activate Changes** to make those changes effective. But here we click on **"Save"**, which make an entry in **Shopping Cart**. Then we need to click on **"Commit Changes"** to make those changes effective. Later, we go to Admin console and verify the changes in initial capacity and minimum capacity. 
 	
 a. As we connect to Admin Server, we observe two options: **Configuration** and **Monitoring**.
 
@@ -466,7 +466,7 @@ i. Verify the **Initial Capacity** and **Minimum Capacity**.
 
 ## Monitoring through WebLogic-Remote-Console
 
-	[ANKIT TO DO again 3-4 sentences what we are planning to do here]
+We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we have deployed **aussie-tripper** application to **cluster-1** and we accessed the application running on **managed-server1**. In this step, we will show, How you can monitor **"Open Session Count"** for **aussie-tripper** application running on **managed-server1**. So first we open a **New Incognito Window** in Chrome Browser, and access the application **aussie-tripper** running on **managed-server1**. Then we will show you through WebLogic-Remote-Console, How the **Open Session Count** has changed from 1 to 2 now.
 	
 a. Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
 
