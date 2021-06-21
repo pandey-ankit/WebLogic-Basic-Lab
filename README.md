@@ -2,15 +2,21 @@
 
 ## Intro to WebLogic Server
 
+[ANKIT TO DO]
+
 ## Typical topology
+
+[ANKIT TO DO]
 Admin Server + Managed server
 
 ## Connectivity to Database
 
+[ANKIT TO DO]
 DataSources + Connection poooling
 
 ## Running and deploying JavaEE applications
 
+[ANKIT TO DO]
 Paragraph about this
 
 
@@ -48,6 +54,16 @@ If you are already familiar with the WebLogic Server Administration Console depl
 - The configuration and monitoring content is separated into separate pages in the Remote Console. In the WebLogic Server Administration Console, the configuration and runtime information are presented on one page. See [Separation of Configuration and Runtime Data](https://github.com/oracle/weblogic-remote-console/blob/master/site/console_uidesign.md#separation).
 - The Change Center is now expressed as a shopping cart. See [Use the Shopping Cart](https://github.com/oracle/weblogic-remote-console/blob/master/site/console_uidesign.md#cart).
 - Instead of logging directly into the Administration Console deployed in a WebLogic domain, the Remote Console connects to the Administration Server in a WebLogic domain, with the credentials supplied by the user, using WebLogic REST APIs.
+
+## Lab scenario ##
+
+You will:
+- start Admin and Managed servers (as docker containers)
+- verify that those two are up and running by connecting to Weblogic Admin Console
+- create JDBC Connection Pool and establish connection between Weblogic and Oracle DB
+- deploy sample application and verify that it is up and running
+- setup WebLogic Remote Console to do some basic configuration and monitoring
+
 
 ##  Step 1: Login to OCI console and Navigating through Resources
 
@@ -243,7 +259,8 @@ n. Leave Default on Next Screen and click on **Next**.
 
 o. Collect the following information from Connection String in the Oracle Database Page.
 
-> If **mydb.sub06110437450.ankitvcn.oraclevcn.com:1521/DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com** is your connection string, then it is in  <**HostName**>:1521/<**DBName**> format.So in this case **Hostname** is *mydb.sub06110437450.ankitvcn.oraclevcn.com* and **DBName** is *DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com*. So please find out your own **HostName** and **DBName** from your connection string. Please look out your own Database Connection tab, below image is just for showing you what is your **HostName** and **DBName**.
+The syntax of Connection string is following  **HostName**:1521/**DBName**.
+So please note from the connection string both:  **HostName** and **DBName** - we will need them later
 
 ![](images/75.png)
 	
@@ -254,14 +271,10 @@ o. Collect the following information from Connection String in the Oracle Databa
 
 p. So you need to Enter your values  for **Hostname** and **DBName** from connection string similar to below one and click on **Next**.
 
->		 		Database Name:			DBName
-	
->				Host Name:			HostName
-
+>	 		Database Name:			[REPLACE IT WITH DBName read above]
+>			Host Name:			[REPLACE IT WITH HostName read above]
 >   			Port:	 			1521
-
 >   			Database User Name:		system
-
 >   			Password:			AAaa11##1
 
 ![](images/30.png)
@@ -415,9 +428,7 @@ e. It starts the WebLogic Remote Console. Go to Browser and paste the URL **http
 f. You need to connect WebLogic Remote Console with WebLogic Admin Server. The Remote Console relies on REST API. So please enter the Following details and click on **Connect**.
 
 > 	Username:		weblogic
-
 > 	Password:		welcome1
-
 > 	URL:			http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001
 
 ![](images/58.png)
@@ -452,7 +463,7 @@ f. Click on the **Shopping Cart Icon** and then click on **Commit Changes**.
 
 ![](images/65.png)
 
-g. Go to Admin Console **http://<Public_IP_Of_Instance>:7001/console** and verify the changes we made through **WebLogic-Remote-Console**.
+g. Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** and verify the changes we made through **WebLogic-Remote-Console**.
 
 ![](images/66.png)
 
@@ -466,13 +477,13 @@ i. Verify the **Initial Capacity** and **Minimum Capacity**.
 
 ## Monitoring through WebLogic-Remote-Console
 
-We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we have deployed **aussie-tripper** application to **cluster-1** and we accessed the application running on **managed-server1**. In this step, we will show, How you can monitor **"Open Session Count"** for **aussie-tripper** application running on **managed-server1**. So first we open a **New Incognito Window** in Chrome Browser, and access the application **aussie-tripper** running on **managed-server1**. Then we will show you through WebLogic-Remote-Console, How the **Open Session Count** has changed from 1 to 2 now.
+We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we have deployed **aussie-tripper** application to **cluster-1** and we accessed the application running on **managed-server1**. In this step, we will show, How you can monitor **"Open Session Count"** for **aussie-tripper** application running on **managed-server1**. So number of the open sessions should be equal to 1 right now on the monitoring page. We will simulate another such session. So we open a **New Incognito Window** in Chrome Browser, and access the application **aussie-tripper** running on **managed-server1**. Then we will show you through WebLogic-Remote-Console, How the **Open Session Count** has changed from 1 to 2 now.
 	
 a. Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
 
 ![](images/69.png)
 
-b. Click on **Hamburger menu** of upper left corner and you may observe the **Session Opened Total Count** is equal to **1**.
+b. Click on **Hamburger menu** of upper left corner and you may observe the **Session Opened Total Count** is equal to **1**. IF you have already accessed to that application before from more than one browser then number of the sessions could reflect this.
 
 ![](images/70.png)
 	
@@ -480,7 +491,7 @@ c. Go to browser and open a **New Incognito window**.
 
 ![](images/71.png)
 
-d. Open aussie-tripper home page: **http://<Public_IP_of_Instance>:8001/aussie-tripper/**.
+d. Open aussie-tripper home page: **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:8001/aussie-tripper/**.
 
 ![](images/72.png)
 
@@ -489,6 +500,6 @@ e. Go back to **WebLogic-Remote-Console** and click on **Refresh Icon**.
 
 ![](images/73.png)
 
-f. Verify the **open session count** as **2**.
+f. Verify the **open session count** as **2**. (or another increased value)
 
 ![](images/74.png)
