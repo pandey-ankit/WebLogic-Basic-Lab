@@ -21,15 +21,10 @@ These Docker containers enable users to create clustered and non-clustered Oracl
 In the **sample-domain1**, we have a Dynamic cluster **cluster-1** which has 5 managed server configured.In this Lab, using **docker run** we will run **one Admin Server container** and **one Managed Server container**.
 
 We have the following advantages of this topology.
-
 - Good for traditional-like deployments.
-
 - Easy to deploy containers from Oracle WebLogic Server domain images.
-
 - Easy to scale up and down the cluster.
-
 - Good for developers.
-
 - No need to install or configure anything on host except for Docker binaries.
 
 ## Connectivity to Database
@@ -158,7 +153,7 @@ ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 The image with the sample domain is stored in OCIR registry (registry in Oracle Cloud). The server will open inside the container port 7001. And this port will be mapped to port 7001 of the VM. So the admin server will be accessible through port 7001 of our VM.
 
 ```bash
-docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startWebLogic.sh
+sudo docker run -p 7001:7001 --network='bridge' --name='WLSADMIN' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startWebLogic.sh
 ```
 
 ![](images/11.png)
@@ -198,7 +193,7 @@ ssh -i ../.ssh/id_rsa opc@[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]
 We will use the same image as we were using in Step 2. This time we will start another process within the context of that Docker container (Managed Server instead of Admin Server). The Managed Server intends to open and bind to port 8001 of our VM	
 
 ```bash
-docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startManagedWebLogic.sh managed-server1 t3://<Public_Ip_Of_Instance>:7001 -Dweblogic.management.username=weblogic -Dweblogic.management.password=welcome1
+sudo docker run -p 8001:8001 --network='bridge' --name='WLSMS1' --rm iad.ocir.io/weblogick8s/weblogic-operator-tutorial-store:1.0 /u01/oracle/user_projects/domains/sample-domain1/bin/startManagedWebLogic.sh managed-server1 t3://<Public_Ip_Of_Instance>:7001 -Dweblogic.management.username=weblogic -Dweblogic.management.password=welcome1
 ```
 
 ![](images/17.png)
@@ -218,82 +213,53 @@ WebLogic Server connects to Datbase(s) through mechanism called connection pooli
 In the Luna environment we created for you simple running Oracle DB. And in this lab we will demonstrate how to connect to that DB.
 
 1. On the Desktop, Click on **Luna-Lab.html** file.
-
 2. This Luna-Lab.html file contains the Credentials for your oracle cloud account which you will use for this lab.
-
 3. Click on **OCI CONSOLE**. It opens a new tab. Click on Copy for copying Username and Password and paste it on new tab as shown below.
-
 4. Click on **Sign In**.
-
 5. Click on **Hamburger menu** in upper left corner, then click on **Oracle Database -> Bare Metal, VM and Exadata**.
-
 ![](images/20.png)
-
 6. Select the Same **Compartment** and Click on DB System **DBWLS** which is created for you.
-
 ![](images/21.png)
-
 7. Click on the Databases **DBWLS** as shown below.
-
 ![](images/22.png)
-
 8. Click on **DB Connection** tab, Then Click on **Show** in **Easy Connect**. It will provide the **Connection String** Which we will use for using this database.
-
 ![](images/23.png)
-
 ![](images/24.png)
 
 > Note: You need to note some information like **Hostname**, **DB name** from **Connection String**.
-
 > If **mydb.sub06110437450.ankitvcn.oraclevcn.com:1521/DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com** is your connection string, then it is <**HostName**>:1521/<**DBName**> format.So in this case **Hostname** is *mydb.sub06110437450.ankitvcn.oraclevcn.com* and **DBName** is *DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com*. 
 	
 > Below are the Value of **Username** and **Password** for the above Database.
-	
 >		Username:		system
 >		Password:		AAaa11##1
-	
 > This information will be required, when we will create JDBC data source in next steps.
 
 9. Go back to browser and open a WebLogic Admin Console at **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** . Use **weblogic/welcome1** as **Username/Password** then click on **Login**.
 
 10. The configuration changes require to open the "Edit" session. So you need to click on **Lock & Edit**.
-
 ![](images/25.png)
-
 11. Click on **Services-> Data Sources-> New-> Generic Data Source**.
-
 ![](images/26.png)
-
 l2. Enter the Following Details and click on **Next**.
-
 > 	Name:     			  testDS
-
 > 	Scope:		      		  Global
-
 > 	JNDI Name:		      	  jdbc/testDS (this is the name that Application will use to find Connection Pool)
-
 > 	Database Type:			  Oracle
-
 ![](images/27.png)
 
-
 13. Select the Database Driver as **“Oracle Driver (Thin) for Service Connection; Version: Any”** and click on **Next**.
-
 ![](images/28.png)
-
 14. Leave Default on Next Screen and click on **Next**.
-
 ![](images/29.png)
-
 15. Collect the following information from Connection String in the Oracle Database Page.
-
 The syntax of Connection string is following  **HostName**:1521/**DBName**.
 So please note from the connection string both:  **HostName** and **DBName** - we will need them later
 
 ![](images/75.png)
 	
 > Below are the Value of **Username** and **Password** for the above Database.
-	
+
+
 >		Username:		system
 >		Password:		AAaa11##1
 
@@ -301,13 +267,18 @@ So please note from the connection string both:  **HostName** and **DBName** - w
 
 >	 		Database Name:			[REPLACE IT WITH DBName read above]
 >			Host Name:			[REPLACE IT WITH HostName read above]
->   			Port:	 			1521
->   			Database User Name:		system
->   			Password:			AAaa11##1
+>   		Port:	 			1521
+>   		Database User Name:		system
+>   		Password:			AAaa11##1
 
 ![](images/30.png)
 	
-> Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the DB credentials in https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/DBREADME.md.
+> Note: If you find out that you don’t have Oracle Database configured in your oracle cloud account. Then for completing this lab, you can use the below DB Credentials given
+
+>           Hostname:		129.146.60.235 <Public_Ip_of_Instance_Containing_DB>
+>           DB Name:		DBWLS_phx16j.sub06110437450.ankitvcn.oraclevcn.com
+>           Username:		system
+>           Password:		AAaa11##1
 
 
 17. Click on **Test Configuration**.  You will see message **“Connection test succeeded”**. Click on **Next**.
@@ -346,8 +317,6 @@ So please note from the connection string both:  **HostName** and **DBName** - w
 In this embedded domain **sample-domain1**, we have dynamic cluster **cluster-1**. In this step we will deploy **aussie-tripper-v1.ear** application to dynamic cluster **cluster-1**.  We already started managed-server1 in step 3. Se here we show, How you deploy an application archive file as an application to the cluster and How you make an application, to start servicing all request. Later, as have only one managed server running  inside the cluster, so we will access the **aussie-tripper** application on managed-server1 port 8001.
 	
 1. Right Click on the Desktop, and then click on **Open Terminal Here**.
-
-	
 2. Download demo application archive
 	
 ```bash
@@ -357,8 +326,7 @@ curl -LSs https://github.com/pandey-ankit/WebLogic-Basic-Lab/blob/main/aussie-tr
 ![](images/38.png)
 
 > Note: This command downloads the application **aussie-tripper-v1.ear** from git repository and put it in Desktop. 
-
-  
+ 
 3. Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console**  and Click on **Deployments**.
 
 ![](images/39.png)
@@ -528,6 +496,6 @@ We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we ha
 
 ![](images/73.png)
 
-6. Verify the **open session count** as **2**. (or another increased value)
+6. Verify the **Session Opened Total count** as **2**. (or another increased value)
 
 ![](images/74.png)
