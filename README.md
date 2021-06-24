@@ -251,9 +251,10 @@ l2. Enter the Following Details and click on **Next**.
 ![](images/28.png)
 14. Leave Default on Next Screen and click on **Next**.
 ![](images/29.png)
+
 15. Collect the following information from Connection String in the Oracle Database Page.
-The syntax of Connection string is following  **HostName**:1521/**DBName**.
-So please note from the connection string both:  **HostName** and **DBName** - we will need them later
+- The syntax of Connection string is following  **HostName**:1521/**DBName**.
+- So please note from the connection string both:  **HostName** and **DBName** - we will need them later.
 
 ![](images/75.png)
 	
@@ -456,7 +457,6 @@ We can make configuration changes through WebLogic-Remote-Console. So in this st
 6. Click on the **Shopping Cart Icon** and then click on **Commit Changes**.
 
 ![](images/64.png)
-
 ![](images/65.png)
 
 7. Go to Admin Console **http://[REPLACE_THIS_WITH_THE_Public_Ip_Of_Instance]:7001/console** and verify the changes we made through **WebLogic-Remote-Console**.
@@ -473,7 +473,7 @@ We can make configuration changes through WebLogic-Remote-Console. So in this st
 
 ## Monitoring through WebLogic-Remote-Console
 
-We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we have deployed **aussie-tripper** application to **cluster-1** and we accessed the application running on **managed-server1**. In this step, we will show, How you can monitor **"Open Session Count"** for **aussie-tripper** application running on **managed-server1**. So number of the open sessions should be equal to 1 right now on the monitoring page. We will simulate another such session. So we open a **New Incognito Window** in Chrome Browser, and access the application **aussie-tripper** running on **managed-server1**. Then we will show you through WebLogic-Remote-Console, How the **Open Session Count** has changed from 1 to 2 now.
+We can also perform monitoring through WebLogic-Remote-Console. In Step 5, we have deployed **aussie-tripper** application to **cluster-1** and we accessed the application running on **managed-server1**. In this step, we will show, How you can monitor **"Open Session Count"** for **aussie-tripper** application running on **managed-server1**. So number of the open sessions should be equal to 1 right now on the monitoring page. We will simulate another such session. So we open a **New Incognito Window** in Chrome Browser, and access the application **aussie-tripper** running on **managed-server1**. Then we will show you through WebLogic-Remote-Console, How the **Session Opened Total Count** has changed from 1 to 2 now.
 	
 1. Click on **Monitoring Icon -> Running Servers-> managed-server1->Deployments-> aussie-tripper-v1_v1->Component Runtimes-> managed-server1/aussie-tripper**. 
 
